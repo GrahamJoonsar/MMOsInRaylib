@@ -4,42 +4,44 @@
 
 const int screenWidth = 500;
 const int screenHeight = 500;
-bool moving = false;
+bool moving = false; // This is neccesary so that multiple MMOs can't move at the same time
 
-float distance(float x1, float y1, float x2, float y2){
+float distance(float x1, float y1, float x2, float y2){ // Distance formula
     return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
 }
 
-class MouseMovableObject{
+class MouseMovableObject{ // The MMO class
     public:
-        float x, y, radius;
-        bool selfMoving = false;
-        Color color;
-    void draw(){
-        DrawCircle(x, y, radius, color);
+        float x, y, radius; // This can change depending on what you want to draw
+        bool selfMoving = false; // This shoud not change
+        Color color; 
+    void draw(){ 
+        DrawCircle(x, y, radius, color); // This should change depending on what you want to draw
     }
-    void move(){
-        if (distance(x, y, GetMouseX(), GetMouseY()) < radius && IsMouseButtonPressed(0) && !moving){
+    void move(){ // This should not change
+        if (distance(x, y, GetMouseX(), GetMouseY()) < radius && IsMouseButtonPressed(0) && !moving){ // Mouse Down
             selfMoving = true;
             moving = true;
         }
-        if (IsMouseButtonReleased(0) && selfMoving){
+        if (IsMouseButtonReleased(0) && selfMoving){ // Mouse up
             selfMoving = false;
             moving = false;
         }
-        if (selfMoving){
+        if (selfMoving){ // While mouse down
             x = GetMouseX();
             y = GetMouseY();
         }
     }
 };
 
-const int mmosPerRow = 100;
+/**********CODE FOR EXAMPLE**********/
+
+const int mmosPerRow = 100; // spacing inbetween the MMOs
 
 MouseMovableObject mmo;
 MouseMovableObject mmos[int((screenWidth/mmosPerRow) * (screenHeight/mmosPerRow))];
 
-void genMMOs(){
+void genMMOs(){ // This generates the MMOs for the example
     mmo.color = RED;
     mmo.radius = 20;
     int index = 0;
@@ -52,13 +54,15 @@ void genMMOs(){
     }
 }
 
+/**********END CODE FOR EXAMPLE**********/
+
 int main(void){
     
     InitWindow(screenWidth, screenHeight, "Mouse Movables Test"); // Initializing the window
 
     SetTargetFPS(60);
     
-    genMMOs();
+    genMMOs(); // Generating the MMOs for the example
     
     while (!WindowShouldClose()) // Main game loop
     {
@@ -66,7 +70,7 @@ int main(void){
 
         ClearBackground(WHITE);
         
-        for (int i = 0; i < (screenWidth/mmosPerRow) * (screenHeight/mmosPerRow); i++){
+        for (int i = 0; i < (screenWidth/mmosPerRow) * (screenHeight/mmosPerRow); i++){ // Drawing all of the MMOs
             mmos[i].draw();
             mmos[i].move();
         }
